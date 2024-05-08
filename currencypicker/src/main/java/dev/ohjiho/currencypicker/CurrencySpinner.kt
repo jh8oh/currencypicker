@@ -1,7 +1,6 @@
 package dev.ohjiho.currencypicker
 
 import android.content.Context
-import android.icu.util.Currency
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,6 +8,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import dev.ohjiho.currencypicker.databinding.CurrencySpinnerBinding
+import java.util.Currency
 
 class CurrencySpinner(
     context: Context,

@@ -1,14 +1,13 @@
 package dev.ohjiho.currencypicker
 
 import android.annotation.SuppressLint
-import android.icu.util.Currency
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import dev.ohjiho.currencypicker.databinding.ItemCurrencyBinding
+import java.util.Currency
 
 internal class CurrencyAdapter(private val listener: Listener) :
     RecyclerView.Adapter<CurrencyAdapter.ViewHolder>(), Filterable {
