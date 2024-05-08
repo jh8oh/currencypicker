@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/item_currency_background"
+    android:paddingHorizontal="@dimen/item_currency_padding_horizontal"
+    android:paddingVertical="@dimen/item_currency_padding_vertical">
+
+    <ImageView
+        android:id="@+id/currency_flag"
+        android:layout_width="32dp"
+        android:layout_height="24dp"
+        android:contentDescription="@string/item_currency_flag_content_description"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/flag_cad" />
+
+    <TextView
+        android:id="@+id/currency_long_name"
+        style="@style/TextAppearance.Material3.BodyLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/item_currency_long_name_margin_start"
+        app:layout_constraintBottom_toTopOf="@id/currency_code"
+        app:layout_constraintStart_toEndOf="@id/currency_flag"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Canadian Dollars" />
+
+    <TextView
+        android:id="@+id/currency_code"
+        style="@style/TextAppearance.Material3.LabelMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/item_currency_symbol_margin_end"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/currency_long_name"
+        app:layout_constraintTop_toBottomOf="@id/currency_long_name"
+        tools:text="CAD" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

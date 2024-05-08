@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" android:enterFadeDuration="@integer/material_motion_duration_short_2" android:exitFadeDuration="@integer/material_motion_duration_short_2">
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/currency_spinner_item_pressed" />
+        </shape>
+    </item>
+    <item android:drawable="@android:color/transparent" />
+</selector>

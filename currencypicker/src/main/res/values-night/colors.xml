@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="currency_spinner_item_pressed">#101010</color>
+</resources>
