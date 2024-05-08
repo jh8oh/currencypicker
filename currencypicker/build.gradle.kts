@@ -40,3 +40,26 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
+
+afterEvaluate {
+    publishing {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/jh8oh/currency-picker")
+                credentials {
+                    username = project.properties["gpr.user"]?.toString()
+                    password = project.properties["gpr.key"]?.toString()
+                }
+            }
+        }
+        publications {
+            create<MavenPublication>("release") {
+                from(components.getByName("release"))
+                groupId = "dev.ohjiho"
+                artifactId = "currency-picker"
+                version = "1.0.0"
+            }
+        }
+    }
+}
