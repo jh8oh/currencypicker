@@ -1,6 +1,5 @@
 package dev.ohjiho.currencypickerdemo
 
-import android.icu.util.Currency
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -12,6 +11,7 @@ import dev.ohjiho.currencypicker.CurrencySpinner
 import dev.ohjiho.currencypickerdemo.databinding.ActivityMainBinding
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.Currency
 
 class MainActivity : AppCompatActivity(), CurrencySpinner.Listener {
 
