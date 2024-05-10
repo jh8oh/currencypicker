@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -46,10 +48,14 @@ afterEvaluate {
         repositories {
             maven {
                 name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/jh8oh/currency-picker")
+                url = uri("https://maven.pkg.github.com/jh8oh/currencypicker")
                 credentials {
-                    username = project.properties["gpr.user"]?.toString()
-                    password = project.properties["gpr.key"]?.toString()
+                    val properties =
+                        File( "local.properties").inputStream().use {
+                            Properties().apply { load(it) }
+                        }
+                    username = properties.getProperty("gpr.user")
+                    password = properties.getProperty("gpr.key")
                 }
             }
         }
@@ -57,7 +63,7 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 from(components.getByName("release"))
                 groupId = "dev.ohjiho"
-                artifactId = "currency-picker"
+                artifactId = "currencypicker"
                 version = "1.0.0"
             }
         }
