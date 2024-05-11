@@ -16,6 +16,8 @@ class CurrencySpinner(
     defStyleAttr: Int = 0,
 ) : LinearLayout(context, attr, defStyleAttr), CurrencyAdapter.Listener {
 
+    private var listener: Listener? = null
+
     interface Listener {
         fun onCurrencySelected(currency: Currency)
     }
@@ -38,12 +40,20 @@ class CurrencySpinner(
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
     }
 
+    fun setListener(listener: Listener) {
+        this.listener = listener
+    }
+
     override fun onItemSelected(currency: Currency) {
-        try {
-            (context as Listener).onCurrencySelected(currency)
-        } catch (e: ClassCastException) {
-            Log.e("CurrencySpinner", "Context must implement CurrencySpinner.Listener")
-            throw e
+        if (listener == null) {
+            try {
+                (context as Listener).onCurrencySelected(currency)
+            } catch (e: ClassCastException) {
+                Log.e("CurrencySpinner", "Context must implement CurrencySpinner.Listener")
+                throw e
+            }
+        } else {
+            listener!!.onCurrencySelected(currency)
         }
     }
 }
