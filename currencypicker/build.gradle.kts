@@ -64,7 +64,7 @@ afterEvaluate {
                 from(components.getByName("release"))
                 groupId = "dev.ohjiho"
                 artifactId = "currencypicker"
-                version = "1.0.0"
+                version = "1.1.0"
             }
         }
     }
