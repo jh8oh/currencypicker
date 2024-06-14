@@ -16,7 +16,7 @@ internal class CurrencyAdapter(private val listener: Listener) :
     private var filteredCurrencies = currencies
     private val filter = object : Filter() {
         override fun performFiltering(constraint: CharSequence?): FilterResults {
-            filteredCurrencies = if (constraint.isNullOrEmpty()) {
+            val filtered = if (constraint.isNullOrEmpty()) {
                 currencies
             } else {
                 val lowerCaseConstraint = constraint.toString().lowercase()
@@ -26,12 +26,15 @@ internal class CurrencyAdapter(private val listener: Listener) :
                 }
             }
             return FilterResults().apply {
-                values = filteredCurrencies
+                values = filtered
             }
         }
 
         @SuppressLint("NotifyDataSetChanged")
         override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+            filteredCurrencies = if (results?.values == null) {
+                listOf()
+            } else results.values as List<CurrencyCode>
             notifyDataSetChanged()
         }
     }
