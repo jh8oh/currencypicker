@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import dev.ohjiho.currencypicker.databinding.ItemCurrencyBinding
 import java.util.Currency
@@ -46,7 +47,7 @@ internal class CurrencyAdapter(private val listener: Listener) :
     inner class ViewHolder(private val binding: ItemCurrencyBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(currencyCode: CurrencyCode) {
             val currency = Currency.getInstance(currencyCode.name)
-            binding.currencyFlag.setImageResource(currencyCode.resId)
+            binding.currencyFlag.setImageDrawable(ContextCompat.getDrawable(itemView.context, currencyCode.resId))
             binding.currencyCode.text = currencyCode.name
             binding.currencyLongName.text = currency.displayName
 
