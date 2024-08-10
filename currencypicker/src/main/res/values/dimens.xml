@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="item_currency_height">54dp</dimen>
-    <dimen name="item_currency_padding_start">12dp</dimen>
+    <dimen name="item_currency_padding_horizontal">12dp</dimen>
     <dimen name="item_currency_long_name_margin_start">6dp</dimen>
     <dimen name="item_currency_symbol_margin_end">8dp</dimen>
 </resources>
