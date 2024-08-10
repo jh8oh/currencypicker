@@ -3,10 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/item_currency_height"
     android:background="@drawable/item_currency_background"
-    android:paddingHorizontal="@dimen/item_currency_padding_horizontal"
-    android:paddingVertical="@dimen/item_currency_padding_vertical">
+    android:paddingStart="@dimen/item_currency_padding_start">
 
     <ImageView
         android:id="@+id/currency_flag"
@@ -27,6 +26,7 @@
         app:layout_constraintBottom_toTopOf="@id/currency_code"
         app:layout_constraintStart_toEndOf="@id/currency_flag"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
         tools:text="Canadian Dollars" />
 
     <TextView
