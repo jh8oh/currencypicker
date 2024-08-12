@@ -25,19 +25,23 @@ class CurrencySpinner(
     init {
         val binding = CurrencySpinnerBinding.inflate(LayoutInflater.from(context), this, true)
 
-        val adapter = CurrencyAdapter(this)
+        val currencyAdapter = CurrencyAdapter(this)
+        currencyAdapter.setHasStableIds(true)
 
         binding.searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String?): Boolean {
-                adapter.filter.filter(newText)
+                currencyAdapter.filter.filter(newText)
                 return false
             }
 
             override fun onQueryTextSubmit(query: String?) = false
         })
 
-        binding.recyclerView.adapter = adapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(context)
+        binding.recyclerView.apply {
+            adapter = currencyAdapter
+            layoutManager = LinearLayoutManager(context)
+            setItemViewCacheSize(25)
+        }
     }
 
     fun setListener(listener: Listener) {

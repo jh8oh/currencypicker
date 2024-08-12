@@ -50,15 +50,17 @@ internal class CurrencyAdapter(private val listener: Listener) :
             binding.currencyFlag.setImageDrawable(ContextCompat.getDrawable(itemView.context, currencyCode.resId))
             binding.currencyCode.text = currencyCode.name
             binding.currencyLongName.text = currency.displayName
-
-            binding.root.setOnClickListener {
-                listener.onItemSelected(currency)
-            }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(ItemCurrencyBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        val viewHolder = ViewHolder(ItemCurrencyBinding.inflate(LayoutInflater.from(parent.context), parent, false)).apply {
+            itemView.setOnClickListener {
+                listener.onItemSelected(Currency.getInstance(filteredCurrencies[adapterPosition].name))
+            }
+        }
+
+        return viewHolder
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -66,6 +68,10 @@ internal class CurrencyAdapter(private val listener: Listener) :
     }
 
     override fun getItemCount() = filteredCurrencies.size
+
+    override fun getItemId(position: Int): Long {
+        return filteredCurrencies[position].ordinal.toLong()
+    }
 
     override fun getFilter(): Filter = filter
 }
