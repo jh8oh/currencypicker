@@ -88,7 +88,7 @@ class CurrencyPicker @JvmOverloads constructor(
     override fun onItemSelected(currencyCode: CurrencyCode) {
         binding.searchBar.setQuery("", false)
         binding.searchBar.clearFocus()
-        if (currencyCode in CurrencyCode.getPopularCurrency()) {
+        if (currencyCode in CurrencyCode.getPopularCurrency() && showMoreClicked) {
             showMoreClicked = false
         }
 
