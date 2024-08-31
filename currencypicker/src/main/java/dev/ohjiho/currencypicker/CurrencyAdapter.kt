@@ -10,10 +10,14 @@ import androidx.recyclerview.widget.RecyclerView
 import dev.ohjiho.currencypicker.databinding.ItemCurrencyBinding
 import java.util.Currency
 
-internal class CurrencyAdapter(private val listener: Listener) :
+internal class CurrencyAdapter(
+    private val listener: Listener,
+    private val selectedCurrency: String?,
+    popularCurrency: Boolean,
+) :
     RecyclerView.Adapter<CurrencyAdapter.ViewHolder>(), Filterable {
 
-    private val currencies: List<CurrencyCode> = CurrencyCode.entries
+    private val currencies: List<CurrencyCode> = if (popularCurrency) CurrencyCode.getPopularCurrency() else CurrencyCode.entries
     private var filteredCurrencies = currencies
     private val filter = object : Filter() {
         override fun performFiltering(constraint: CharSequence?): FilterResults {
@@ -40,27 +44,37 @@ internal class CurrencyAdapter(private val listener: Listener) :
         }
     }
 
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        // Very hacky. Need to delay enough for recyclerview to be set up properly
+        recyclerView.postDelayed(
+            { recyclerView.scrollToPosition(filteredCurrencies.map { it.name }.indexOf(selectedCurrency)) },
+            200
+        )
+    }
+
     interface Listener {
         fun onItemSelected(currency: Currency)
     }
 
     inner class ViewHolder(private val binding: ItemCurrencyBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(currencyCode: CurrencyCode) {
-            val currency = Currency.getInstance(currencyCode.name)
-            binding.currencyFlag.setImageDrawable(ContextCompat.getDrawable(itemView.context, currencyCode.resId))
-            binding.currencyCode.text = currencyCode.name
-            binding.currencyLongName.text = currency.displayName
+            with(binding) {
+                root.isSelected = selectedCurrency == currencyCode.name
+                currencyFlag.setImageDrawable(ContextCompat.getDrawable(itemView.context, currencyCode.resId))
+                currencyShortCode.text = currencyCode.name
+                currencyLongName.text = Currency.getInstance(currencyCode.name).displayName
+            }
+
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val viewHolder = ViewHolder(ItemCurrencyBinding.inflate(LayoutInflater.from(parent.context), parent, false)).apply {
+        return ViewHolder(ItemCurrencyBinding.inflate(LayoutInflater.from(parent.context), parent, false)).apply {
             itemView.setOnClickListener {
                 listener.onItemSelected(Currency.getInstance(filteredCurrencies[adapterPosition].name))
             }
         }
-
-        return viewHolder
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

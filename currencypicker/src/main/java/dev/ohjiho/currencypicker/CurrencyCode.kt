@@ -132,7 +132,6 @@ internal enum class CurrencyCode(val resId: Int) {
     SRD(R.drawable.flag_srd),
     SSP(R.drawable.flag_ssp),
     STN(R.drawable.flag_stn),
-    SVC(R.drawable.flag_svc),
     SYP(R.drawable.flag_syp),
     SZL(R.drawable.flag_szl),
     THB(R.drawable.flag_thb),
@@ -160,5 +159,9 @@ internal enum class CurrencyCode(val resId: Int) {
     YER(R.drawable.flag_yer),
     ZAR(R.drawable.flag_zar),
     ZMW(R.drawable.flag_zmw),
-    ZWL(R.drawable.flag_zwl),
+    ZWL(R.drawable.flag_zwl);
+
+    companion object {
+        fun getPopularCurrency() = listOf(USD, EUR, JPY, GBP, CNY, AUD, CAD, CHF, HKD, SGD, SEK, KRW)
+    }
 }
