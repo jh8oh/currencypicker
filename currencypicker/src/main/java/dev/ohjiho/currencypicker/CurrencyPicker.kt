@@ -73,7 +73,7 @@ class CurrencyPicker @JvmOverloads constructor(
     }
 
     fun setSelectedCurrency(currency: Currency) {
-        if (currency.currencyCode !in CurrencyCode.getPopularCurrency().map { it.name } && popularCurrency){
+        if (currency.currencyCode !in CurrencyCode.getPopularCurrency().map { it.name } && popularCurrency && !showMoreClicked){
             showMoreClicked = true
         }
         currencyAdapter.selectedCurrency = CurrencyCode.valueOf(currency.currencyCode)
