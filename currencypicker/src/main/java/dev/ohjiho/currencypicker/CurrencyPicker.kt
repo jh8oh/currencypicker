@@ -86,11 +86,14 @@ class CurrencyPicker @JvmOverloads constructor(
     }
 
     override fun onItemSelected(currencyCode: CurrencyCode) {
+        binding.searchBar.setQuery("", false)
+        binding.searchBar.clearFocus()
+        if (currencyCode in CurrencyCode.getPopularCurrency()) {
+            showMoreClicked = false
+        }
+
         if (listener == null) {
             try {
-                if (currencyCode in CurrencyCode.getPopularCurrency()) {
-                    showMoreClicked = false
-                }
                 (context as Listener).onCurrencySelected(Currency.getInstance(currencyCode.name))
             } catch (e: ClassCastException) {
                 Log.e("CurrencySpinner", "Context must implement CurrencySpinner.Listener")
