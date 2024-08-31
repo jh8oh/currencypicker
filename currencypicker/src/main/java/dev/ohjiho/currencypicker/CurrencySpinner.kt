@@ -5,8 +5,8 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.LinearLayout
 import androidx.appcompat.widget.SearchView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import dev.ohjiho.currencypicker.databinding.CurrencySpinnerBinding
 import java.util.Currency
@@ -15,7 +15,7 @@ class CurrencySpinner @JvmOverloads constructor(
     context: Context,
     attr: AttributeSet? = null,
     defStyleAttr: Int = 0,
-) : LinearLayout(context, attr, defStyleAttr), CurrencyAdapter.Listener {
+) : ConstraintLayout(context, attr, defStyleAttr), CurrencyAdapter.Listener {
 
     // Binding
     private val binding = CurrencySpinnerBinding.inflate(LayoutInflater.from(context), this, true)
@@ -48,10 +48,6 @@ class CurrencySpinner @JvmOverloads constructor(
 
     init {
         setUpSpinner()
-
-        binding.showMoreButton.setOnClickListener {
-            showMoreClicked = true
-        }
     }
 
     private fun setUpSpinner() {
@@ -62,7 +58,6 @@ class CurrencySpinner @JvmOverloads constructor(
         binding.searchBar.clearFocus()
         if (popularCurrency && !showMoreClicked) {
             binding.searchBar.visibility = View.GONE
-            binding.showMoreButton.visibility = View.VISIBLE
         } else {
             binding.searchBar.visibility = View.VISIBLE
             binding.searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -73,7 +68,6 @@ class CurrencySpinner @JvmOverloads constructor(
 
                 override fun onQueryTextSubmit(query: String?) = false
             })
-            binding.showMoreButton.visibility = View.GONE
         }
 
         binding.recyclerView.apply {
@@ -89,6 +83,10 @@ class CurrencySpinner @JvmOverloads constructor(
 
     fun setListener(listener: Listener) {
         this.listener = listener
+    }
+
+    override fun showMoreClicked() {
+        showMoreClicked = true
     }
 
     override fun onItemSelected(currencyCode: CurrencyCode) {

@@ -23,14 +23,4 @@
         tools:itemCount="10"
         tools:listitem="@layout/item_currency" />
 
-    <TextView
-        android:id="@+id/show_more_button"
-        style="?textAppearanceButton"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/item_currency_height"
-        android:background="?selectableItemBackground"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="@dimen/item_currency_padding_horizontal"
-        android:text="@string/currency_picker_show_more" />
-
 </LinearLayout>

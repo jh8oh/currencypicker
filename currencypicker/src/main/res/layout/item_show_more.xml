@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/show_more_button"
+    style="?textAppearanceButton"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/item_currency_height"
+    android:background="?selectableItemBackground"
+    android:gravity="center_vertical"
+    android:paddingHorizontal="@dimen/item_currency_padding_horizontal"
+    android:text="@string/currency_picker_show_more" />

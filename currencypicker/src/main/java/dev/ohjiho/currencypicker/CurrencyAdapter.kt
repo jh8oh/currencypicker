@@ -8,14 +8,15 @@ import android.widget.Filterable
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import dev.ohjiho.currencypicker.databinding.ItemCurrencyBinding
+import dev.ohjiho.currencypicker.databinding.ItemShowMoreBinding
 import java.util.Currency
 
 internal class CurrencyAdapter(
     private val listener: Listener,
     private val selectedCurrency: CurrencyCode?,
-    popularCurrency: Boolean,
+    private val popularCurrency: Boolean,
 ) :
-    RecyclerView.Adapter<CurrencyAdapter.ViewHolder>(), Filterable {
+    RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
 
     private val currencies: List<CurrencyCode> = if (popularCurrency) CurrencyCode.getPopularCurrency() else CurrencyCode.entries
     private var filteredCurrencies = currencies
@@ -53,7 +54,7 @@ internal class CurrencyAdapter(
         )
     }
 
-    inner class ViewHolder(private val binding: ItemCurrencyBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class CurrencyViewHolder(private val binding: ItemCurrencyBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(currencyCode: CurrencyCode) {
             with(binding) {
                 root.isSelected = selectedCurrency == currencyCode
@@ -65,27 +66,48 @@ internal class CurrencyAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(ItemCurrencyBinding.inflate(LayoutInflater.from(parent.context), parent, false)).apply {
-            itemView.setOnClickListener {
-                listener.onItemSelected(filteredCurrencies[adapterPosition])
+    inner class ShowMoreViewHolder(binding: ItemShowMoreBinding) : RecyclerView.ViewHolder(binding.root)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == TYPE_CURRENCY) {
+            CurrencyViewHolder(ItemCurrencyBinding.inflate(LayoutInflater.from(parent.context), parent, false)).apply {
+                itemView.setOnClickListener {
+                    listener.onItemSelected(filteredCurrencies[adapterPosition])
+                }
+            }
+        } else {
+            ShowMoreViewHolder(ItemShowMoreBinding.inflate(LayoutInflater.from(parent.context), parent, false)).apply {
+                itemView.setOnClickListener { listener.showMoreClicked() }
             }
         }
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(filteredCurrencies[position])
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (position < filteredCurrencies.size) {
+            (holder as CurrencyViewHolder).bind(filteredCurrencies[position])
+        }
     }
 
-    override fun getItemCount() = filteredCurrencies.size
+    override fun getItemCount() = if (popularCurrency) filteredCurrencies.size + 1 else filteredCurrencies.size
 
     override fun getItemId(position: Int): Long {
-        return filteredCurrencies[position].ordinal.toLong()
+        return if (position < filteredCurrencies.size) filteredCurrencies[position].ordinal.toLong() else -1
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return if (position < filteredCurrencies.size) TYPE_CURRENCY
+        else TYPE_SHOW_MORE
     }
 
     override fun getFilter(): Filter = filter
 
     interface Listener {
         fun onItemSelected(currencyCode: CurrencyCode)
+        fun showMoreClicked()
+    }
+
+    companion object {
+        private const val TYPE_CURRENCY = 0
+        private const val TYPE_SHOW_MORE = 1
     }
 }
