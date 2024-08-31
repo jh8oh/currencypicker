@@ -93,6 +93,7 @@ class CurrencyPicker @JvmOverloads constructor(
         binding.searchBar.clearFocus()
         if (currencyCode in CurrencyCode.getPopularCurrency() && showMoreClicked) {
             showMoreClicked = false
+            currencyAdapter.selectedCurrency = currencyCode
         }
 
         if (listener == null) {
