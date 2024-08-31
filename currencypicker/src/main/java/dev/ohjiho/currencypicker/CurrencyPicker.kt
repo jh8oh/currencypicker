@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dev.ohjiho.currencypicker.databinding.CurrencySpinnerBinding
 import java.util.Currency
 
-class CurrencySpinner @JvmOverloads constructor(
+class CurrencyPicker @JvmOverloads constructor(
     context: Context,
     attr: AttributeSet? = null,
     defStyleAttr: Int = 0,

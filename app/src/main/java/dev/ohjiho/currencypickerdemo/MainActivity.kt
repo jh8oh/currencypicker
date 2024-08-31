@@ -7,13 +7,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import dev.ohjiho.currencypicker.CurrencySpinner
+import dev.ohjiho.currencypicker.CurrencyPicker
 import dev.ohjiho.currencypickerdemo.databinding.ActivityMainBinding
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.Currency
 
-class MainActivity : AppCompatActivity(), CurrencySpinner.Listener {
+class MainActivity : AppCompatActivity(), CurrencyPicker.Listener {
 
     private val viewModel by viewModels<MainViewModel>()
     private lateinit var binding: ActivityMainBinding
@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity(), CurrencySpinner.Listener {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
 
-        val spinner = CurrencySpinner(this)
+        val spinner = CurrencyPicker(this)
         dialog = AlertDialog.Builder(this).setView(spinner).create()
         binding.button.setOnClickListener {
             dialog.show()
