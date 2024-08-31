@@ -19,7 +19,7 @@
 
     <TextView
         android:id="@+id/currency_long_name"
-        style="?textAppearanceBodyLarge"
+        style="?textAppearanceBodyMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/item_currency_long_name_margin_start"
