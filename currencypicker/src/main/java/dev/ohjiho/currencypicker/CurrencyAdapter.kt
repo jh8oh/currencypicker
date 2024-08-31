@@ -12,7 +12,7 @@ import java.util.Currency
 
 internal class CurrencyAdapter(
     private val listener: Listener,
-    private val selectedCurrency: String?,
+    private val selectedCurrency: CurrencyCode?,
     popularCurrency: Boolean,
 ) :
     RecyclerView.Adapter<CurrencyAdapter.ViewHolder>(), Filterable {
@@ -48,19 +48,15 @@ internal class CurrencyAdapter(
         super.onAttachedToRecyclerView(recyclerView)
         // Very hacky. Need to delay enough for recyclerview to be set up properly
         recyclerView.postDelayed(
-            { recyclerView.scrollToPosition(filteredCurrencies.map { it.name }.indexOf(selectedCurrency)) },
+            { recyclerView.scrollToPosition(filteredCurrencies.indexOf(selectedCurrency)) },
             200
         )
-    }
-
-    interface Listener {
-        fun onItemSelected(currency: Currency)
     }
 
     inner class ViewHolder(private val binding: ItemCurrencyBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(currencyCode: CurrencyCode) {
             with(binding) {
-                root.isSelected = selectedCurrency == currencyCode.name
+                root.isSelected = selectedCurrency == currencyCode
                 currencyFlag.setImageDrawable(ContextCompat.getDrawable(itemView.context, currencyCode.resId))
                 currencyShortCode.text = currencyCode.name
                 currencyLongName.text = Currency.getInstance(currencyCode.name).displayName
@@ -72,7 +68,7 @@ internal class CurrencyAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(ItemCurrencyBinding.inflate(LayoutInflater.from(parent.context), parent, false)).apply {
             itemView.setOnClickListener {
-                listener.onItemSelected(Currency.getInstance(filteredCurrencies[adapterPosition].name))
+                listener.onItemSelected(filteredCurrencies[adapterPosition])
             }
         }
     }
@@ -88,4 +84,8 @@ internal class CurrencyAdapter(
     }
 
     override fun getFilter(): Filter = filter
+
+    interface Listener {
+        fun onItemSelected(currencyCode: CurrencyCode)
+    }
 }

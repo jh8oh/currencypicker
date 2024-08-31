@@ -33,7 +33,7 @@ class CurrencySpinner(
             setUpSpinner()
         }
 
-    private var selectedCurrencyCode: String? = null
+    private var selectedCurrencyCode: CurrencyCode? = null
         set(value) {
             field = value
             setUpSpinner()
@@ -83,24 +83,28 @@ class CurrencySpinner(
         }
     }
 
+    fun setSelectedCurrency(currency: Currency) {
+        selectedCurrencyCode = CurrencyCode.valueOf(currency.currencyCode)
+    }
+
     fun setListener(listener: Listener) {
         this.listener = listener
     }
 
-    override fun onItemSelected(currency: Currency) {
+    override fun onItemSelected(currencyCode: CurrencyCode) {
         if (listener == null) {
             try {
-                if (currency.currencyCode in CurrencyCode.getPopularCurrency().map { it.name }) {
+                if (currencyCode in CurrencyCode.getPopularCurrency()) {
                     showMoreClicked = false
                 }
-                selectedCurrencyCode = currency.currencyCode
-                (context as Listener).onCurrencySelected(currency)
+                selectedCurrencyCode = currencyCode
+                (context as Listener).onCurrencySelected(Currency.getInstance(currencyCode.name))
             } catch (e: ClassCastException) {
                 Log.e("CurrencySpinner", "Context must implement CurrencySpinner.Listener")
                 throw e
             }
         } else {
-            listener!!.onCurrencySelected(currency)
+            listener!!.onCurrencySelected(Currency.getInstance(currencyCode.name))
         }
     }
 }

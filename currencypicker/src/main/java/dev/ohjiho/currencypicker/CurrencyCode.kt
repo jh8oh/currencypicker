@@ -5,7 +5,7 @@ package dev.ohjiho.currencypicker
  *
  * @see <a href="https://www.six-group.com/en/products-services/financial-information/data-standards.html">ISO data source</a>
  */
-internal enum class CurrencyCode(val resId: Int) {
+enum class CurrencyCode(val resId: Int) {
     AED(R.drawable.flag_aed),
     AFN(R.drawable.flag_afn),
     ALL(R.drawable.flag_all),
