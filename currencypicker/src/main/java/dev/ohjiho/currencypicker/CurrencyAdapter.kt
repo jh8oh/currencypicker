@@ -6,20 +6,43 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dev.ohjiho.currencypicker.databinding.ItemCurrencyBinding
 import dev.ohjiho.currencypicker.databinding.ItemShowMoreBinding
 import java.util.Currency
 
-class CurrencyAdapter(
-    private val listener: Listener,
-    private val popularCurrency: Boolean,
-) :
+class CurrencyAdapter(private val listener: Listener) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
 
-    private val currencies: List<CurrencyCode> = if (popularCurrency) CurrencyCode.getPopularCurrency() else CurrencyCode.entries
-    private var filteredCurrencies = currencies
+    var popularCurrency: Boolean = true
+        @SuppressLint("NotifyDataSetChanged")
+        set(value) {
+            if (field != value){
+                currencies = if (value) CurrencyCode.getPopularCurrency() else CurrencyCode.entries
+                filteredCurrencies = currencies
+                notifyDataSetChanged()
+                field = value
+            }
+        }
+
+    var selectedCurrency: CurrencyCode? = null
+        set(value) {
+            filteredCurrencies.indexOf(value).let {
+                if (it != -1) {
+                    notifyItemChanged(it)
+                }
+            }
+            filteredCurrencies.indexOf(field).let {
+                if (it != -1) {
+                    notifyItemChanged(it)
+                }
+            }
+
+            field = value
+        }
+
+    private var currencies: List<CurrencyCode> = if (popularCurrency) CurrencyCode.getPopularCurrency() else CurrencyCode.entries
+    var filteredCurrencies = currencies
     private val filter = object : Filter() {
         override fun performFiltering(constraint: CharSequence?): FilterResults {
             val filtered = if (constraint.isNullOrEmpty()) {
@@ -43,36 +66,6 @@ class CurrencyAdapter(
             } else results.values as List<CurrencyCode>
             notifyDataSetChanged()
         }
-    }
-
-    var selectedCurrency: CurrencyCode? = null
-        set(value) {
-            filteredCurrencies.indexOf(value).let {
-                if (it != -1) {
-                    notifyItemChanged(it)
-                }
-            }
-            filteredCurrencies.indexOf(field).let {
-                if (it != -1) {
-                    notifyItemChanged(it)
-                }
-            }
-
-            field = value
-        }
-
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-        // Very hacky. Need to delay enough for recyclerview to be set up properly
-        recyclerView.postDelayed(
-            {
-                (recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
-                    filteredCurrencies.indexOf(selectedCurrency),
-                    0
-                )
-            },
-            200
-        )
     }
 
     inner class CurrencyViewHolder(private val binding: ItemCurrencyBinding) : RecyclerView.ViewHolder(binding.root) {

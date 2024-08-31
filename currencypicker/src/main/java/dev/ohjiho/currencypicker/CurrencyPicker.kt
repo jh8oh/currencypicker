@@ -18,20 +18,20 @@ class CurrencyPicker @JvmOverloads constructor(
 ) : ConstraintLayout(context, attr, defStyleAttr), CurrencyAdapter.Listener {
 
     // Binding
-    lateinit var currencyAdapter: CurrencyAdapter
+    val currencyAdapter: CurrencyAdapter = CurrencyAdapter(this)
     private val binding = CurrencySpinnerBinding.inflate(LayoutInflater.from(context), this, true)
 
     // Attributes
     var popularCurrency = true
         set(value) {
             field = value
-            setUpSpinner()
+            onPopularCurrencyOrShowMoreClickedChange()
         }
 
     private var showMoreClicked = false
         set(value) {
             field = value
-            setUpSpinner()
+            onPopularCurrencyOrShowMoreClickedChange()
         }
 
     // Listener
@@ -42,15 +42,21 @@ class CurrencyPicker @JvmOverloads constructor(
     }
 
     init {
-        setUpSpinner()
+        currencyAdapter.setHasStableIds(true)
+        binding.searchBar.visibility = View.GONE
+
+        binding.recyclerView.apply {
+            adapter = currencyAdapter
+            layoutManager = LinearLayoutManager(context)
+            setItemViewCacheSize(25)
+        }
     }
 
-    private fun setUpSpinner() {
-        currencyAdapter = CurrencyAdapter(this,popularCurrency && !showMoreClicked)
-        currencyAdapter.setHasStableIds(true)
-
+    private fun onPopularCurrencyOrShowMoreClickedChange() {
         binding.searchBar.setQuery("", false)
         binding.searchBar.clearFocus()
+
+        currencyAdapter.popularCurrency = (popularCurrency && !showMoreClicked)
         if (popularCurrency && !showMoreClicked) {
             binding.searchBar.visibility = View.GONE
         } else {
@@ -63,12 +69,6 @@ class CurrencyPicker @JvmOverloads constructor(
 
                 override fun onQueryTextSubmit(query: String?) = false
             })
-        }
-
-        binding.recyclerView.apply {
-            adapter = currencyAdapter
-            layoutManager = LinearLayoutManager(context)
-            setItemViewCacheSize(25)
         }
     }
 
@@ -86,6 +86,16 @@ class CurrencyPicker @JvmOverloads constructor(
     override fun showMoreClicked(selectedCurrency: CurrencyCode?) {
         showMoreClicked = true
         currencyAdapter.selectedCurrency = selectedCurrency
+
+        binding.recyclerView.postDelayed(
+            {
+                (binding.recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
+                    currencyAdapter.filteredCurrencies.indexOf(selectedCurrency),
+                    0
+                )
+            },
+            200
+        )
     }
 
     override fun onItemSelected(currencyCode: CurrencyCode) {
