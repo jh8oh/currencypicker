@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dev.ohjiho.currencypicker.databinding.ItemCurrencyBinding
 import dev.ohjiho.currencypicker.databinding.ItemShowMoreBinding
@@ -49,7 +50,12 @@ internal class CurrencyAdapter(
         super.onAttachedToRecyclerView(recyclerView)
         // Very hacky. Need to delay enough for recyclerview to be set up properly
         recyclerView.postDelayed(
-            { recyclerView.scrollToPosition(filteredCurrencies.indexOf(selectedCurrency)) },
+            {
+                (recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
+                    filteredCurrencies.indexOf(selectedCurrency),
+                    0
+                )
+            },
             200
         )
     }
