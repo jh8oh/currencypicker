@@ -18,6 +18,7 @@ class CurrencySpinner @JvmOverloads constructor(
 ) : ConstraintLayout(context, attr, defStyleAttr), CurrencyAdapter.Listener {
 
     // Binding
+    lateinit var currencyAdapter: CurrencyAdapter
     private val binding = CurrencySpinnerBinding.inflate(LayoutInflater.from(context), this, true)
 
     // Attributes
@@ -28,12 +29,6 @@ class CurrencySpinner @JvmOverloads constructor(
         }
 
     private var showMoreClicked = false
-        set(value) {
-            field = value
-            setUpSpinner()
-        }
-
-    private var selectedCurrencyCode: CurrencyCode? = null
         set(value) {
             field = value
             setUpSpinner()
@@ -51,7 +46,7 @@ class CurrencySpinner @JvmOverloads constructor(
     }
 
     private fun setUpSpinner() {
-        val currencyAdapter = CurrencyAdapter(this, selectedCurrencyCode,popularCurrency && !showMoreClicked)
+        currencyAdapter = CurrencyAdapter(this,popularCurrency && !showMoreClicked)
         currencyAdapter.setHasStableIds(true)
 
         binding.searchBar.setQuery("", false)
@@ -78,15 +73,16 @@ class CurrencySpinner @JvmOverloads constructor(
     }
 
     fun setSelectedCurrency(currency: Currency) {
-        selectedCurrencyCode = CurrencyCode.valueOf(currency.currencyCode)
+        currencyAdapter.selectedCurrency = CurrencyCode.valueOf(currency.currencyCode)
     }
 
     fun setListener(listener: Listener) {
         this.listener = listener
     }
 
-    override fun showMoreClicked() {
+    override fun showMoreClicked(selectedCurrency: CurrencyCode?) {
         showMoreClicked = true
+        currencyAdapter.selectedCurrency = selectedCurrency
     }
 
     override fun onItemSelected(currencyCode: CurrencyCode) {
@@ -95,7 +91,6 @@ class CurrencySpinner @JvmOverloads constructor(
                 if (currencyCode in CurrencyCode.getPopularCurrency()) {
                     showMoreClicked = false
                 }
-                selectedCurrencyCode = currencyCode
                 (context as Listener).onCurrencySelected(Currency.getInstance(currencyCode.name))
             } catch (e: ClassCastException) {
                 Log.e("CurrencySpinner", "Context must implement CurrencySpinner.Listener")

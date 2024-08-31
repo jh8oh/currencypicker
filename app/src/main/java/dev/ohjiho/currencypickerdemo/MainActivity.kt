@@ -24,7 +24,8 @@ class MainActivity : AppCompatActivity(), CurrencySpinner.Listener {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
 
-        dialog = AlertDialog.Builder(this).setView(CurrencySpinner(this)).create()
+        val spinner = CurrencySpinner(this)
+        dialog = AlertDialog.Builder(this).setView(spinner).create()
         binding.button.setOnClickListener {
             dialog.show()
         }
@@ -32,6 +33,9 @@ class MainActivity : AppCompatActivity(), CurrencySpinner.Listener {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.selectedCurrency.asStateFlow().collect {
+                    if (it != null) {
+                        spinner.setSelectedCurrency(it)
+                    }
                     binding.text.text = getString(R.string.text_placeholder, it?.displayName ?: "None")
                 }
             }

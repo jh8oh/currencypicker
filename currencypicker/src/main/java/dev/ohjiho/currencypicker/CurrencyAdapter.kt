@@ -12,9 +12,8 @@ import dev.ohjiho.currencypicker.databinding.ItemCurrencyBinding
 import dev.ohjiho.currencypicker.databinding.ItemShowMoreBinding
 import java.util.Currency
 
-internal class CurrencyAdapter(
+class CurrencyAdapter(
     private val listener: Listener,
-    private val selectedCurrency: CurrencyCode?,
     private val popularCurrency: Boolean,
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
@@ -45,6 +44,22 @@ internal class CurrencyAdapter(
             notifyDataSetChanged()
         }
     }
+
+    var selectedCurrency: CurrencyCode? = null
+        set(value) {
+            filteredCurrencies.indexOf(value).let {
+                if (it != -1) {
+                    notifyItemChanged(it)
+                }
+            }
+            filteredCurrencies.indexOf(field).let {
+                if (it != -1) {
+                    notifyItemChanged(it)
+                }
+            }
+
+            field = value
+        }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
@@ -83,7 +98,7 @@ internal class CurrencyAdapter(
             }
         } else {
             ShowMoreViewHolder(ItemShowMoreBinding.inflate(LayoutInflater.from(parent.context), parent, false)).apply {
-                itemView.setOnClickListener { listener.showMoreClicked() }
+                itemView.setOnClickListener { listener.showMoreClicked(selectedCurrency) }
             }
         }
     }
@@ -109,7 +124,7 @@ internal class CurrencyAdapter(
 
     interface Listener {
         fun onItemSelected(currencyCode: CurrencyCode)
-        fun showMoreClicked()
+        fun showMoreClicked(selectedCurrency: CurrencyCode?)
     }
 
     companion object {
