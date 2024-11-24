@@ -22,7 +22,7 @@ class CurrencyPicker @JvmOverloads constructor(
     private val binding = CurrencySpinnerBinding.inflate(LayoutInflater.from(context), this, true)
 
     // Attributes
-    var popularCurrencyByDefault = true
+    var showPopularCurrencyByDefault = true
         set(value) {
             if (field != value) {
                 field = value
@@ -65,7 +65,7 @@ class CurrencyPicker @JvmOverloads constructor(
     }
 
     private fun onPopularCurrencyOrShowFullCurrencyChange() {
-        val isPopularCurrencyShown = (popularCurrencyByDefault && !showFullCurrency)
+        val isPopularCurrencyShown = (showPopularCurrencyByDefault && !showFullCurrency)
         currencyAdapter.isPopularCurrencyBeingShown = isPopularCurrencyShown
         if (isPopularCurrencyShown) {
             binding.searchBar.visibility = View.GONE
@@ -93,7 +93,7 @@ class CurrencyPicker @JvmOverloads constructor(
 
     override fun onItemSelected(currencyCode: CurrencyCode) {
         currencyAdapter.selectedCurrency = currencyCode
-        if (currencyCode in CurrencyCode.getPopularCurrency() && popularCurrencyByDefault && showFullCurrency) {
+        if (currencyCode in CurrencyCode.getPopularCurrency() && showPopularCurrencyByDefault && showFullCurrency) {
             showFullCurrency = false
             clearSearchBar()
         }
