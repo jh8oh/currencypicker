@@ -22,16 +22,20 @@ class CurrencyPicker @JvmOverloads constructor(
     private val binding = CurrencySpinnerBinding.inflate(LayoutInflater.from(context), this, true)
 
     // Attributes
-    var popularCurrency = true
+    var popularCurrencyByDefault = true
         set(value) {
-            field = value
-            onPopularCurrencyOrShowMoreClickedChange()
+            if (field != value) {
+                field = value
+                onPopularCurrencyOrShowFullCurrencyChange()
+            }
         }
 
-    private var showMoreClicked = false
+    private var showFullCurrency = false
         set(value) {
-            field = value
-            onPopularCurrencyOrShowMoreClickedChange()
+            if (field != value) {
+                field = value
+                onPopularCurrencyOrShowFullCurrencyChange()
+            }
         }
 
     // Listener
@@ -43,8 +47,16 @@ class CurrencyPicker @JvmOverloads constructor(
 
     init {
         currencyAdapter.setHasStableIds(true)
-        binding.searchBar.visibility = View.GONE
+        onPopularCurrencyOrShowFullCurrencyChange()
 
+        binding.searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(newText: String?): Boolean {
+                currencyAdapter.filter.filter(newText)
+                return false
+            }
+
+            override fun onQueryTextSubmit(query: String?) = false
+        })
         binding.recyclerView.apply {
             adapter = currencyAdapter
             layoutManager = LinearLayoutManager(context)
@@ -52,73 +64,38 @@ class CurrencyPicker @JvmOverloads constructor(
         }
     }
 
-    private fun onPopularCurrencyOrShowMoreClickedChange() {
-        binding.searchBar.setQuery("", false)
-        binding.searchBar.clearFocus()
-
-        currencyAdapter.popularCurrency = (popularCurrency && !showMoreClicked)
-        if (popularCurrency && !showMoreClicked) {
+    private fun onPopularCurrencyOrShowFullCurrencyChange() {
+        val isPopularCurrencyShown = (popularCurrencyByDefault && !showFullCurrency)
+        currencyAdapter.isPopularCurrencyBeingShown = isPopularCurrencyShown
+        if (isPopularCurrencyShown) {
             binding.searchBar.visibility = View.GONE
         } else {
             binding.searchBar.visibility = View.VISIBLE
-            binding.searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    currencyAdapter.filter.filter(newText)
-                    return false
-                }
-
-                override fun onQueryTextSubmit(query: String?) = false
-            })
-        }
-    }
-
-    fun initSelectedCurrency(currency: Currency) {
-        setSelectedCurrency(currency)
-        if (!currencyAdapter.popularCurrency) {
-            binding.recyclerView.postDelayed(
-                {
-                    (binding.recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
-                        currencyAdapter.filteredCurrencies.indexOf(CurrencyCode.valueOf(currency.currencyCode)),
-                        0
-                    )
-                },
-                200
-            )
         }
     }
 
     fun setSelectedCurrency(currency: Currency) {
-        if (currency.currencyCode !in CurrencyCode.getPopularCurrency().map { it.name } && popularCurrency && !showMoreClicked){
-            showMoreClicked = true
+        val currencyCode = CurrencyCode.valueOf(currency.currencyCode)
+        if (currencyCode !in CurrencyCode.getPopularCurrency() && currencyAdapter.isPopularCurrencyBeingShown){
+            showFullCurrency = true
+            scrollToSelectedCurrency(CurrencyCode.valueOf(currency.currencyCode))
         }
-        currencyAdapter.selectedCurrency = CurrencyCode.valueOf(currency.currencyCode)
+        if (!currencyAdapter.isPopularCurrencyBeingShown && binding.searchBar.query.isNotBlank()) {
+            clearSearchBar()
+            scrollToSelectedCurrency(currencyCode)
+        }
+        currencyAdapter.selectedCurrency = currencyCode
     }
 
     fun setListener(listener: Listener) {
         this.listener = listener
     }
 
-    override fun showMoreClicked(selectedCurrency: CurrencyCode?) {
-        showMoreClicked = true
-        currencyAdapter.selectedCurrency = selectedCurrency
-
-        binding.recyclerView.postDelayed(
-            {
-                (binding.recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
-                    currencyAdapter.filteredCurrencies.indexOf(selectedCurrency),
-                    0
-                )
-            },
-            200
-        )
-    }
-
     override fun onItemSelected(currencyCode: CurrencyCode) {
-        binding.searchBar.setQuery("", false)
-        binding.searchBar.clearFocus()
-        if (currencyCode in CurrencyCode.getPopularCurrency() && showMoreClicked) {
-            showMoreClicked = false
-            currencyAdapter.selectedCurrency = currencyCode
+        currencyAdapter.selectedCurrency = currencyCode
+        if (currencyCode in CurrencyCode.getPopularCurrency() && popularCurrencyByDefault && showFullCurrency) {
+            showFullCurrency = false
+            clearSearchBar()
         }
 
         if (listener == null) {
@@ -131,5 +108,27 @@ class CurrencyPicker @JvmOverloads constructor(
         } else {
             listener!!.onCurrencySelected(Currency.getInstance(currencyCode.name))
         }
+    }
+
+    override fun onShowMoreClick(selectedCurrency: CurrencyCode) {
+        showFullCurrency = true
+        scrollToSelectedCurrency(selectedCurrency)
+    }
+
+    private fun clearSearchBar() {
+        binding.searchBar.setQuery("", false)
+        binding.searchBar.clearFocus()
+    }
+
+    private fun scrollToSelectedCurrency(selectedCurrency: CurrencyCode) {
+        binding.recyclerView.postDelayed(
+            {
+                (binding.recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
+                    currencyAdapter.filteredCurrencies.indexOf(selectedCurrency),
+                    0
+                )
+            },
+            200
+        )
     }
 }

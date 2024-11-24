@@ -6,9 +6,9 @@ import kotlinx.coroutines.flow.update
 import java.util.Currency
 
 class MainViewModel : ViewModel() {
-    val selectedCurrency = MutableStateFlow<Currency?>(null)
+    var selectedCurrency: Currency? = null
 
     fun setCurrency(currency: Currency) {
-        selectedCurrency.update { currency }
+        selectedCurrency = currency
     }
 }

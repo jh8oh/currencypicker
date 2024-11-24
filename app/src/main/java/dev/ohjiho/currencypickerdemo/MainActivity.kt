@@ -30,22 +30,13 @@ class MainActivity : AppCompatActivity(), CurrencyPicker.Listener {
             dialog.show()
         }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.selectedCurrency.asStateFlow().collect {
-                    if (it != null) {
-                        spinner.setSelectedCurrency(it)
-                    }
-                    binding.text.text = getString(R.string.text_placeholder, it?.displayName ?: "None")
-                }
-            }
-        }
+        viewModel.selectedCurrency?.let { spinner.setSelectedCurrency(it) }
 
         setContentView(binding.root)
     }
 
     override fun onCurrencySelected(currency: Currency) {
         viewModel.setCurrency(currency)
-        dialog.dismiss()
+        binding.text.text = getString(R.string.text_placeholder, currency.displayName ?: "None")
     }
 }

@@ -14,7 +14,7 @@ import java.util.Currency
 class CurrencyAdapter(private val listener: Listener) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
 
-    var popularCurrency: Boolean = true
+    var isPopularCurrencyBeingShown: Boolean = true
         @SuppressLint("NotifyDataSetChanged")
         set(value) {
             if (field != value){
@@ -25,7 +25,7 @@ class CurrencyAdapter(private val listener: Listener) :
             }
         }
 
-    var selectedCurrency: CurrencyCode? = null
+    var selectedCurrency: CurrencyCode = CurrencyCode.USD
         set(value) {
             filteredCurrencies.indexOf(value).let {
                 if (it != -1) {
@@ -41,7 +41,7 @@ class CurrencyAdapter(private val listener: Listener) :
             field = value
         }
 
-    private var currencies: List<CurrencyCode> = if (popularCurrency) CurrencyCode.getPopularCurrency() else CurrencyCode.entries
+    private var currencies: List<CurrencyCode> = CurrencyCode.getPopularCurrency()
     var filteredCurrencies = currencies
     private val filter = object : Filter() {
         override fun performFiltering(constraint: CharSequence?): FilterResults {
@@ -91,7 +91,7 @@ class CurrencyAdapter(private val listener: Listener) :
             }
         } else {
             ShowMoreViewHolder(ItemShowMoreBinding.inflate(LayoutInflater.from(parent.context), parent, false)).apply {
-                itemView.setOnClickListener { listener.showMoreClicked(selectedCurrency) }
+                itemView.setOnClickListener { listener.onShowMoreClick(selectedCurrency) }
             }
         }
     }
@@ -102,7 +102,7 @@ class CurrencyAdapter(private val listener: Listener) :
         }
     }
 
-    override fun getItemCount() = if (popularCurrency) filteredCurrencies.size + 1 else filteredCurrencies.size
+    override fun getItemCount() = if (isPopularCurrencyBeingShown) filteredCurrencies.size + 1 else filteredCurrencies.size
 
     override fun getItemId(position: Int): Long {
         return if (position < filteredCurrencies.size) filteredCurrencies[position].ordinal.toLong() else -1
@@ -117,7 +117,7 @@ class CurrencyAdapter(private val listener: Listener) :
 
     interface Listener {
         fun onItemSelected(currencyCode: CurrencyCode)
-        fun showMoreClicked(selectedCurrency: CurrencyCode?)
+        fun onShowMoreClick(selectedCurrency: CurrencyCode)
     }
 
     companion object {
