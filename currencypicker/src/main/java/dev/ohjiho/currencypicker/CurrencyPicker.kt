@@ -77,6 +77,17 @@ class CurrencyPicker @JvmOverloads constructor(
             showMoreClicked = true
         }
         currencyAdapter.selectedCurrency = CurrencyCode.valueOf(currency.currencyCode)
+        if (!currencyAdapter.popularCurrency) {
+            binding.recyclerView.postDelayed(
+                {
+                    (binding.recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
+                        currencyAdapter.filteredCurrencies.indexOf(CurrencyCode.valueOf(currency.currencyCode)),
+                        0
+                    )
+                },
+                200
+            )
+        }
     }
 
     fun setListener(listener: Listener) {
